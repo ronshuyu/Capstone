@@ -1,0 +1,40 @@
+.feature {
+  padding: 50px 0;
+}
+
+.feature video {
+  width: 800;
+  height: 450;
+  border-radius: 10px;
+}
+
+.feature-right{
+    flex-basis: 56%;
+}
+
+.feature-right p{
+    padding-left: 20px;
+    margin-top: 23px;
+    text-align: justify;
+    text-indent: 25px;
+     font-weight: 550;
+    font-family: 'Sofia Sans Semi Condensed', sans-serif;
+    color: #000000;
+}
+
+.features{
+     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 90%;
+}
+
+.feature-right h2{
+    margin-top: 23px;
+    text-align: justify;
+    text-indent: 10px;
+     font-weight: 600;
+    font-family: 'Sofia Sans Semi Condensed', sans-serif;
+    color: #2E8B57;
+}
+

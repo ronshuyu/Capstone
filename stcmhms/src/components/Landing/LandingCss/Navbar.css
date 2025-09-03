@@ -1,0 +1,33 @@
+nav{
+    width: 100%;
+    /*background: #C2DCB1;*/
+    color: #fff;
+    padding: 2px 2px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items:  center;
+    justify-content: space-between;
+    z-index: 10;
+    transition: all 0.5s ease;
+}
+
+.logo{
+    padding-top: 1px;
+    width: 90px;
+}
+nav ul li{
+    display: inline-block;
+    list-style-type: none;
+    margin: 10px 20px;
+    font-size: 20px;
+
+}
+
+.dark-nav{
+    background: linear-gradient(rgba(49, 116, 5, 0.266), rgba(194,220,177,0.3));
+    backdrop-filter: blur(5px);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); /* smoother curve */
+    opacity: 1;
+}

@@ -1,0 +1,59 @@
+.about{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 90%;
+}
+
+.about-left{
+    flex-basis: 40%;
+    position: relative;
+}
+
+.about-right{
+    flex-basis: 56%;
+}
+
+.about-right p{
+    margin-top: 23px;
+    text-align: justify;
+    text-indent: 25px;
+     font-weight: 600;
+    font-family: 'Sofia Sans Semi Condensed', sans-serif;
+    color: #000000;
+}
+
+.student{
+     width: 100%;
+     border-radius: 10px;
+     position: relative;
+ 
+} 
+
+.play_icon{
+    width: 60px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+}
+
+.about h3{
+    font-weight: 600;
+    font-size: 16px;
+    color: #2E8B57;
+}
+
+.about h2{
+    font-size: 35px;
+     color:  #243d5e;
+    margin: 10px 0;
+    max-width: 400px;
+}
+
+.about p{
+    color: #000000;
+    margin-bottom: 15px;
+
+}

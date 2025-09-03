@@ -1,0 +1,299 @@
+/* ProfileDropdown.css */
+
+/* Profile Container */
+.profile-container {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  width: 240px;
+  z-index: 1000;
+}
+
+.profile-wrapper {
+  background: #2E8B57;
+  border: 1px solid #000000;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+/* Profile Button */
+.profile-button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  color: #dcddde;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.2s;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.profile-button:hover {
+  background: #ffffff6b;
+}
+
+.profile-avatar {
+  position: relative;
+  width: 32px;
+  height: 32px;
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-avatar-fallback {
+  width: 100%;
+  height: 100%;
+  background: #5865f2;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.status-indicator {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 12px;
+  height: 12px;
+  background: #3ba5a5;
+  border: 2px solid #292b2f;
+  border-radius: 50%;
+}
+
+.profile-info {
+  flex: 1;
+  text-align: left;
+  min-width: 0;
+}
+
+.profile-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-username {
+  font-size: 0.75rem;
+  font-weight: 650;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.more-icon {
+  width: 16px;
+  height: 16px;
+  color: #b9bbbe;
+}
+
+/* Dropdown */
+.profile-dropdown {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  width: 320px;
+  background: #c2dcb1;
+  border: 1px solid #000000;
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(13, 13, 13, 0.982);
+  margin-bottom: 8px;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.2s ease;
+}
+
+.profile-dropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Dropdown Header */
+.dropdown-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #3f4147;
+}
+
+.dropdown-user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dropdown-avatar {
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+
+.dropdown-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.dropdown-avatar-fallback {
+  width: 100%;
+  height: 100%;
+  background: #5865f2;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 500;
+  font-size: 1.25rem;
+}
+
+.dropdown-status-indicator {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  width: 20px;
+  height: 20px;
+  background: #3ba55c;
+  border: 4px solid #36393f;
+  border-radius: 50%;
+}
+
+.dropdown-user-details {
+  flex: 1;
+}
+
+.dropdown-display-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.638);
+  margin-bottom: 2px;
+}
+
+.dropdown-username {
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.638);
+  margin-bottom: 4px;
+}
+
+.dropdown-tagline {
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.638);
+  font-family: 'Courier New', monospace;
+}
+
+/* Status Section */
+.dropdown-section {
+  padding: 12px 20px;
+  border-bottom: 1px solid #3f4147;
+}
+
+.section-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.638);
+  margin-bottom: 8px;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background: #3ba55c;
+  border-radius: 50%;
+}
+
+.status-text {
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.638);
+}
+
+
+/* Action Items */
+.dropdown-actions {
+  padding: 8px 0;
+}
+
+.action-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 20px;
+  background: none;
+  border: none;
+  color: rgba(0, 0, 0, 0.778);
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  font-size: 0.875rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  transition: background-color 0.15s;
+}
+
+.action-item:hover {
+  background: #393c43;
+  color: white;
+}
+
+.action-item.danger {
+  color: #070303;
+}
+
+.action-item.danger:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: #f60004;
+}
+
+.action-icon {
+  width: 16px;
+  height: 16px;
+  color: rgba(0, 0, 0, 0.638);
+}
+
+.action-divider {
+  height: 1px;
+  background: #3f4147;
+  margin: 8px 0;
+}
+
+/* SVG Icons */
+.icon {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .profile-container {
+    width: 200px;
+  }
+  
+  .profile-dropdown {
+    width: 280px;
+  }
+}

@@ -1,0 +1,30 @@
+/* Navbar.css */
+.navbardash {
+  background: #2E8B57;
+  padding: 1rem 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
+}
+
+.navdash-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+}
+
+.navdash-brand {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
+}
+
+.navdash-buttons {
+  display: flex;
+  gap: 1rem;
+}

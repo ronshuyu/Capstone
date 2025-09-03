@@ -1,0 +1,352 @@
+/* Login.css */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  transition: 0.5s ease-in-out;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px); /* Safari support */
+}
+
+.hidden {
+  display: none;
+}
+
+.modal-overlay.fade-in {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.fade-out {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.backdrop-filter {
+  transition: 1s ease;
+}
+
+.modal-overlay.fade-in {
+  transition: 0.3s ease-in;
+  opacity: 1;
+}
+
+.modal-overlay.fade-out {
+  opacity: 0;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 400px;
+  margin: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  transform: translateY(0);
+  transition: 0.3s ease-in-out;
+}
+
+.modal-overlay.fade-out .modal-content {
+  transform: translateY(-20px);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #1a202c;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #718096;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.close-btn:hover {
+  background-color: #f7fafc;
+}
+
+.error-message {
+  background-color: #fed7d7;
+  border: 1px solid #feb2b2;
+  color: #c53030;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+.input-group {
+  margin-bottom: 1rem;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #4a5568;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #3182ce;
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+}
+
+.input-group input:disabled {
+  background-color: #f7fafc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.password-input-container {
+  position: relative;
+}
+
+.toggle-password-btn {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #718096;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.toggle-password-btn:hover:not(:disabled) {
+  color: #4a5568;
+}
+
+.toggle-password-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: #4a5568;
+}
+
+.checkbox-container input {
+  margin-right: 0.5rem;
+  width: auto;
+}
+
+.checkmark {
+  margin-left: 0.25rem;
+}
+
+.forgot-password {
+  color: #3182ce;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.forgot-password:hover {
+  color: #2c5282;
+  text-decoration: underline;
+}
+
+.login-submit-btn {
+  background-color: #2d3748;
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-bottom: 1rem;
+}
+
+.signup-submit-btn {
+  background-color: #2d3748;
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 35px;
+}
+
+.login-submit-btn:hover:not(:disabled) {
+  background-color: #1a202c;
+}
+
+.login-submit-btn:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
+
+.google-signin-btn {
+  background-color: white;
+  color: #4a5568;
+  border: 1px solid #cbd5e0;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+  margin-bottom: 1rem;
+}
+
+.google-signin-btn:hover:not(:disabled) {
+  background-color: #f7fafc;
+  border-color: #a0aec0;
+}
+
+.google-signin-btn:disabled {
+  background-color: #f7fafc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.modal-footer {
+  text-align: center;
+  color: #718096;
+}
+
+.signup-link {
+  color: #3182ce;
+  text-decoration: none;
+  margin-left: 0.25rem;
+  transition: color 0.2s;
+}
+
+.signup-link:hover {
+  color: #2c5282;
+  text-decoration: underline;
+}
+
+/* Container holding both forms */
+.form-slider {
+  display: flex;
+  width: 200%; 
+  transition: transform 0.4s ease;
+}
+
+/* Default (Login visible) */
+.form-slider .form-panel {
+  width: 50%;
+  padding: 1rem;
+  overflow-x: hidden;
+}
+
+/* When switching to signup */
+.show-signup {
+  transform: translateX(-50%);
+  overflow-x: hidden;
+}
+
+/* Smooth fade + slide effect */
+.form-panel {
+  transition: opacity 0.3s ease;
+}
+
+.show-login .login-form {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+.show-login .signup-form {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+/* When signup is active */
+.show-signup .signup-form {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+.show-signup .login-form {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.error-message {
+  color: #ff4d4f;
+  background: #ffecec;
+  border: 1px solid #ff4d4f;
+  padding: 8px;
+  margin: 10px 0;
+  border-radius: 6px;
+  font-size: 14px;
+  text-align: center;
+}
+
+
+
+
+/* Responsive design */
+@media (max-width: 480px) {
+  .modal-content {
+    margin: 0.5rem;
+    padding: 1.5rem;
+  }
+  
+  .modal-header h2 {
+    font-size: 1.25rem;
+  }
+}
+

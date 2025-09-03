@@ -1,0 +1,113 @@
+/* Add these styles to your existing Scorecard.css file */
+
+.mood-scale {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #FF4757 0%, #FF6B35 25%, #FFA726 50%, #66BB6A 75%, #4CAF50 100%);
+  border-radius: 12px;
+  border: 2px solid #e9ecef;
+  position: relative;
+}
+
+.mood-scale-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  position: relative;
+  padding: 1rem;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+}
+
+.mood-item {
+  width: 25px;
+  height: 15px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid transparent;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+}
+
+.mood-item:hover {
+  transform: scale(1.1);
+}
+
+.mood-item.active {
+  transform: scale(1.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.mood-emoji {
+  font-size: 4rem;
+  line-height: 1;
+}
+
+.mood-indicator {
+  position: relative;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 2px;
+  margin: 1rem 0;
+}
+
+.mood-pointer {
+  position: absolute;
+  top: -6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  transition: all 0.5s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.mood-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.3rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 0.5rem;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.current-mood-display {
+  text-align: center;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.current-mood-label {
+  font-weight: 500;
+  color: #495057;
+}
+
+.current-mood-text {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .mood-item {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .mood-emoji {
+    font-size: 1.5rem;
+  }
+  
+  .mood-labels {
+    font-size: 0.75rem;
+  }
+}
