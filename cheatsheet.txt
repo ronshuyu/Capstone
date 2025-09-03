@@ -1,0 +1,3 @@
+npm run dev - run app
+python name_of_tester.py - rerun script for ai dataset
+python -m uvicorn stcmhms:app --reload - run fastapi ai
