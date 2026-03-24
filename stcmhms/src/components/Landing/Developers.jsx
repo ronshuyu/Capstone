@@ -14,7 +14,7 @@ const Developers = () => {
     useEffect(() => {
         const autoSlide = setInterval(() => {
             setCurrentSlide((prev) => (prev + 1) % totalSlides);
-        }, 5000);
+        }, 7500);
 
         return () => clearInterval(autoSlide);
     }, [totalSlides]);
@@ -43,7 +43,7 @@ const Developers = () => {
                                 </div>
                             </div>
                             <p>
-                                 First developer description here...
+                                 Full-Stack Developer & Lead Researcher
                             </p>
                         </div>
                     </li>
@@ -57,7 +57,7 @@ const Developers = () => {
                                 </div>
                             </div>
                             <p>
-                                Second developer description here...
+                                Researcher
                             </p>
                         </div>
                     </li>
@@ -71,7 +71,7 @@ const Developers = () => {
                                 </div>
                             </div>
                             <p>
-                                Third developer description here...
+                                Researcher
                             </p>
                         </div>
                     </li>

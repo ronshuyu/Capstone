@@ -5,3 +5,18 @@
   color: #718096;
   font-size: 0.9rem;
 }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .footerdash {
+    padding: 1.5rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footerdash {
+    padding: 1rem;
+    font-size: 0.75rem;
+  }
+}

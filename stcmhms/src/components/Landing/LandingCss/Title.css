@@ -13,3 +13,27 @@
     margin-top: 5px;
     text-transform: none;
 }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .title {
+        margin: 50px 0 20px;
+        font-size: 13px;
+    }
+    
+    .title h2 {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .title {
+        margin: 40px 0 15px;
+        font-size: 12px;
+    }
+    
+    .title h2 {
+        font-size: 20px;
+        margin-top: 3px;
+    }
+}

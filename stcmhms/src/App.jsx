@@ -3,21 +3,35 @@ import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import LandingPage from './Pages/LandingPage';
 import DashboardPage from './Pages/DashboardPage';
 import Login from './components/Login/Login';
-import { useAuth } from './components/Login/Auth'; // adjust path
+import { useAuth } from './components/Login/Auth';
+import Admindash from './components/Admindash/Admindash';
 
 export default function App() {
   const { currentUser, logout } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
+
+  // ✅ initialize directly from localStorage
+  const [isAdmin, setIsAdmin] = useState(() => {
+    return localStorage.getItem("isAdmin") === "true";
+  });
+
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     await logout();
+    localStorage.removeItem("isAdmin"); // clear admin session
+    setIsAdmin(false);
     navigate('/');
+  };
+
+  const handleAdminAccess = () => {
+    setIsAdmin(true);
+    localStorage.setItem("isAdmin", "true"); // persist admin state
+    navigate('/admindash');
   };
 
   return (
     <>
-      {/* Global Login Modal */}
       {showLogin && (
         <Login
           isOpen={showLogin}
@@ -31,7 +45,10 @@ export default function App() {
           element={
             currentUser
               ? <Navigate to="/dashboard" replace />
-              : <LandingPage onShowLogin={() => setShowLogin(true)} />
+              : <LandingPage 
+                  onShowLogin={() => setShowLogin(true)} 
+                  onAdminAccess={handleAdminAccess}
+                />
           }
         />
         <Route
@@ -42,8 +59,15 @@ export default function App() {
               : <Navigate to="/" replace />
           }
         />
-        <Route path="*" 
-        element={<Navigate to="/" replace />} />
+        <Route
+          path="/admindash"
+          element={
+            isAdmin
+              ? <Admindash />
+              : <Navigate to="/" replace />
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
   );

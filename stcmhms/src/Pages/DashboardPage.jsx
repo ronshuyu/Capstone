@@ -7,6 +7,8 @@ import Footer from '../components/Dashboard/FooterDash';
 import ProfileDropdown from '../components/Dashboard/Profile';
 import { useAuth } from '../components/Login/Auth'; // keep your correct path
 import './DashboardPage.css';
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from '../Firebase/Firebase';
 
 const DashboardPage = () => {
   // Use the auth hook inside the component (make sure Auth exports these names)
@@ -19,81 +21,94 @@ const DashboardPage = () => {
   const [currentScore, setCurrentScore] = useState(50);
 
   // -------------------------
-  // Helper: updateScore (defined BEFORE useEffect)
+// Helper: updateScore (defined BEFORE useEffect)
   // -------------------------
-  function updateScore(newEntries) {
-    if (!Array.isArray(newEntries) || newEntries.length === 0) {
-      setCurrentScore(50); // default or whatever you prefer
-      return;
-    }
-
-    // be defensive: ensure mood is a number
-    const totalMood = newEntries.reduce((sum, entry) => {
-      const moodNum = Number(entry.mood) || 0;
-      return sum + moodNum;
-    }, 0);
-
-    const averageMood = totalMood / newEntries.length;
-    const score = Math.round((averageMood / 5) * 100);
-    setCurrentScore(score);
+function updateScore(entries) {
+  if (!Array.isArray(entries) || entries.length === 0) {
+    setCurrentScore(50); // default
+    return;
   }
 
+  // Use scaledScore from each entry (0-100)
+  const validScores = entries
+    .map(entry => Number(entry.scaledScore))
+    .filter(score => !isNaN(score));
+
+  if (validScores.length === 0) {
+    setCurrentScore(50);
+    return;
+  }
+
+  // Average all scaled scores
+  const averageScore =
+    validScores.reduce((sum, score) => sum + score, 0) / validScores.length;
+
+  setCurrentScore(Math.round(averageScore));
+}
+
+
   // -------------------------
-  // Fetch past entries from Firestore when user changes
+// Fetch past entries from Firestore when user changes
   // -------------------------
-  useEffect(() => {
-    const fetchEntries = async () => {
-      if (!currentUser) return;
-      try {
-        console.log('Fetching entries for', currentUser.uid);
-        const dbEntries = await getUserData(); // uses Auth -> getUserData
-        console.log('Fetched entries:', dbEntries);
-        setEntries(dbEntries || []);
-        updateScore(dbEntries || []);
-      } catch (err) {
-        console.error('Failed to fetch entries:', err);
-      }
+ useEffect(() => {
+  if (!currentUser) return;
+
+  const userRef = doc(db, "users", currentUser.uid);
+  const unsubscribe = onSnapshot(userRef, (doc) => {
+    const entries = doc.data()?.userData || [];
+    setEntries(entries);
+
+    // Recalculate currentScore
+    const allScaledScores = entries.map(e => Number(e.scaledScore)).filter(s => !isNaN(s));
+    const avgScore = Math.round(allScaledScores.reduce((sum, s) => sum + s, 0) / allScaledScores.length);
+    setCurrentScore(avgScore);
+  });
+
+  return () => unsubscribe();
+}, [currentUser]);
+ // we purposely keep getUserData out to avoid excessive re-runs if it isn't stable
+
+  // -------------------------
+// Save entry to Firestore + local state
+  // -------------------------
+const handleSaveEntry = async () => {
+  if (!diaryEntry.trim()) return alert("Please write something.");
+
+  try {
+    const aiResponse = await fetch("https://bnq3xr4j-8000.asse.devtunnels.ms/predict", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: diaryEntry, mood: currentMood })
+    });
+    const aiData = await aiResponse.json();
+    const aiScore = aiData.aiscore;
+
+    const scaledScore = ((aiScore - 1) / 4) * 100;
+
+    const newEntry = {
+      text: diaryEntry,
+      mood: currentMood,
+      aiscore: aiScore,
+      scaledScore,
+      date: new Date().toISOString(),
+      timestamp: Date.now()
     };
 
-    fetchEntries();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUser]); // we purposely keep getUserData out to avoid excessive re-runs if it isn't stable
+    await saveUserData(newEntry); // ✅ pass entry directly
 
-  // -------------------------
-  // Save entry to Firestore + local state
-  // -------------------------
-  const handleSaveEntry = async () => {
-    if (!diaryEntry.trim()) {
-      alert('Please write something in your diary entry.');
-      return;
-    }
+    setEntries([...entries, newEntry]);
+    setDiaryEntry("");
+    setCurrentMood(3);
 
-    try {
-      // saveUserData should return the saved entry (as implemented in Auth)
-      const savedEntry = await saveUserData(currentMood, diaryEntry);
+    alert("Entry saved and analyzed by AI!");
+  } catch (error) {
+    console.error(error);
+    alert("Failed to save entry. Please try again.");
+  }
+};
 
-      // If saveUserData returns nothing, build a local entry instead
-      const entryToAdd = savedEntry || {
-        mood: currentMood,
-        diary: diaryEntry,
-        date: new Date().toISOString(),
-        timestamp: Date.now()
-      };
 
-      const newEntries = [...entries, entryToAdd];
-      setEntries(newEntries);
-      updateScore(newEntries);
 
-      // Clear form
-      setDiaryEntry('');
-      setCurrentMood(3);
-
-      alert('Entry saved successfully!');
-    } catch (error) {
-      console.error('Error saving entry:', error);
-      alert('Failed to save entry. Please try again.');
-    }
-  };
 
   // CTA handlers
   const handleStartToday = () => {
@@ -121,11 +136,10 @@ const DashboardPage = () => {
 
   return (
     <div className="landing-page">
-      <Navbar onLogout={handleLogout} />
-
-      <main className="main-content">
+      <main className="dashboard-main-content">
         <div className="container">
-          <HeroDash onStartToday={handleStartToday} onLearnMore={handleLearnMore} />
+       
+          <HeroDash />
 
           <Diary
             currentMood={currentMood}
@@ -134,10 +148,11 @@ const DashboardPage = () => {
             setDiaryEntry={setDiaryEntry}
             onSaveEntry={handleSaveEntry}
             avgScore={currentScore}
+            numEntries={entries.length} // Pass the number of entries
           />
 
-          <Scorecard currentScore={currentScore} />
-        </div>
+          <Scorecard currentScore={currentScore} numEntries={entries.length} /> 
+          </div>
       </main>
 
       <Footer />

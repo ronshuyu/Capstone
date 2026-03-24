@@ -31,3 +31,102 @@ nav ul li{
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); /* smoother curve */
     opacity: 1;
 }
+
+.passcode-box {
+  text-align: center;
+}
+
+.passcode-inputs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.passcode-inputs input {
+  width: 50px;
+  height: 60px;
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 12px;
+  border: 2px solid #ccc;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.passcode-inputs input:focus {
+  border-color: #2c7a2c;
+  background: #e6f5e6;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.cancel-btn,
+.submit-btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background: #ddd;
+}
+
+.submit-btn {
+  background: #2c7a2c;
+  color: #fff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    nav {
+        padding: 2px;
+    }
+    
+    .logo {
+        width: 70px;
+    }
+    
+    nav ul li {
+        margin: 8px 12px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    nav {
+        flex-direction: column;
+        padding: 5px;
+    }
+    
+    .logo {
+        width: 60px;
+        margin-bottom: 5px;
+    }
+    
+    nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    nav ul li {
+        margin: 5px 8px;
+        font-size: 14px;
+    }
+    
+    .passcode-inputs {
+        gap: 5px;
+    }
+    
+    .passcode-inputs input {
+        width: 40px;
+        height: 50px;
+        font-size: 24px;
+    }
+}

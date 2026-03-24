@@ -48,3 +48,71 @@
     padding-top: 0;
     backdrop-filter: blur(20px);
 }
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .whys {
+        width: 95%;
+        margin: 60px auto;
+        padding-bottom: 80px;
+    }
+    
+    .why {
+        flex-basis: 32%;
+    }
+    
+    .caption {
+        font-size: 24px;
+    }
+    
+    .caption img {
+        width: 80px;
+        margin-bottom: 8px;
+    }
+}
+
+@media (max-width: 768px) {
+    .whys {
+        width: 95%;
+        margin: 50px auto;
+        padding-bottom: 60px;
+        flex-wrap: wrap;
+    }
+    
+    .why {
+        flex-basis: 48%;
+        margin-bottom: 20px;
+    }
+    
+    .caption {
+        font-size: 18px;
+    }
+    
+    .caption img {
+        width: 60px;
+        margin-bottom: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .whys {
+        width: 100%;
+        margin: 40px auto;
+        padding-bottom: 40px;
+        padding: 0 10px;
+    }
+    
+    .why {
+        flex-basis: 100%;
+        margin-bottom: 20px;
+    }
+    
+    .caption {
+        font-size: 16px;
+    }
+    
+    .caption img {
+        width: 50px;
+        margin-bottom: 5px;
+    }
+}

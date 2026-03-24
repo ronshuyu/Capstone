@@ -38,3 +38,75 @@
     color: #2E8B57;
 }
 
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .features {
+        width: 95%;
+    }
+    
+    .feature-right {
+        flex-basis: 50%;
+    }
+    
+    .feature video {
+        width: 100%;
+        height: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .feature {
+        padding: 40px 0;
+    }
+    
+    .features {
+        width: 95%;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .feature-right {
+        flex-basis: 100%;
+    }
+    
+    .feature video {
+        width: 100%;
+        height: auto;
+        margin-bottom: 20px;
+    }
+    
+    .feature-right h2 {
+        font-size: 24px;
+    }
+    
+    .feature-right p {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .feature {
+        padding: 30px 0;
+    }
+    
+    .features {
+        width: 100%;
+        padding: 0 10px;
+    }
+    
+    .feature video {
+        border-radius: 8px;
+    }
+    
+    .feature-right h2 {
+        font-size: 20px;
+        text-indent: 0;
+    }
+    
+    .feature-right p {
+        font-size: 12px;
+        padding-left: 10px;
+        text-indent: 15px;
+    }
+}
+

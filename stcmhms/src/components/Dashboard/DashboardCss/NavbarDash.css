@@ -28,3 +28,42 @@
   display: flex;
   gap: 1rem;
 }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navdash-container {
+    padding: 0 1.5rem;
+  }
+  
+  .navdash-brand {
+    font-size: 1rem;
+  }
+  
+  .navdash-buttons {
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbardash {
+    padding: 0.75rem 0;
+  }
+  
+  .navdash-container {
+    padding: 0 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .navdash-brand {
+    font-size: 0.9rem;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .navdash-buttons {
+    width: 100%;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+}

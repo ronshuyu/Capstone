@@ -113,7 +113,7 @@ const ProfileDropdown = ({ user, onLogout }) => {
 
             {/* Status Section */}
             <div className="dropdown-section">
-              <div className="section-title">Mental Health Grade:</div>
+              <div className="section-titlepf">Mental Health Grade:</div>
               <div className="status-item">
                 <div className="status-dot"></div>
                 <div className="status-text">Edit me</div>
@@ -124,7 +124,7 @@ const ProfileDropdown = ({ user, onLogout }) => {
             <div className="dropdown-actions">
               <button className="action-item" onClick={handleEditProfile}>
                 <EditIcon />
-                Edit Profile
+                <b>Analytics</b>
               </button>
               
               <div className="action-divider"></div>

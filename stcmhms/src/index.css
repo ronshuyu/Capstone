@@ -43,3 +43,28 @@ a{
   width: 20px;
   margin-left: 10px;
 }
+
+* {
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+html, body {
+  touch-action: manipulation;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Allow text selection where needed */
+p, span, a, button, input, textarea, label {
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+
+/* Prevent default browser zoom gestures */
+@supports (touch-action: manipulation) {
+  html {
+    touch-action: manipulation;
+  }
+}

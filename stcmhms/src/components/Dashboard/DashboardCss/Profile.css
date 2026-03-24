@@ -1,19 +1,22 @@
 /* ProfileDropdown.css */
 
 /* Profile Container */
+/* Updated Profile Container for Floating Effect */
 .profile-container {
-  position: fixed;
-  bottom: 1rem;
-  left: 1rem;
+  position: fixed; /* Makes it stay in one spot regardless of scroll */
+  bottom: 20px;    /* Distance from the bottom of the screen */
+  left: 20px;      /* Distance from the left of the screen */
   width: 240px;
-  z-index: 1000;
+  z-index: 9999;   /* Ensures it stays on top of all other modules */
 }
 
+/* Optional: Slight shadow to make it "pop" off the background */
 .profile-wrapper {
   background: #2E8B57;
   border: 1px solid #000000;
   border-radius: 8px;
   padding: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); 
 }
 
 /* Profile Button */
@@ -30,6 +33,9 @@
   width: 100%;
   transition: background-color 0.2s;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .profile-button:hover {
@@ -106,8 +112,8 @@
 /* Dropdown */
 .profile-dropdown {
   position: absolute;
-  bottom: 100%;
-  left: 0;
+  bottom: 120%;
+  left: 20px;
   width: 320px;
   background: #c2dcb1;
   border: 1px solid #000000;
@@ -205,7 +211,7 @@
   border-bottom: 1px solid #3f4147;
 }
 
-.section-title {
+.section-titlepf {
   font-size: 0.875rem;
   font-weight: 600;
   color: rgba(0, 0, 0, 0.638);
@@ -250,6 +256,7 @@
   font-size: 0.875rem;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   transition: background-color 0.15s;
+  touch-action: manipulation;
 }
 
 .action-item:hover {
@@ -287,13 +294,4 @@
   stroke-linejoin: round;
 }
 
-/* Responsive adjustments */
-@media (max-width: 480px) {
-  .profile-container {
-    width: 200px;
-  }
-  
-  .profile-dropdown {
-    width: 280px;
-  }
-}
+

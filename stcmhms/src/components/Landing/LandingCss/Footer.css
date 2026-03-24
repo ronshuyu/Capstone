@@ -18,3 +18,40 @@
     list-style: none;
     display: inline-block;
 }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .footer {
+        margin: 10px auto;
+        padding: 12px;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .footer ul li {
+        margin-right: 10px;
+        font-size: 14px;
+    }
+    
+    .footer p {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer {
+        padding: 10px 5px;
+        flex-direction: column;
+    }
+    
+    .footer ul li {
+        display: block;
+        margin: 5px 0;
+    }
+    
+    .footer p {
+        margin-top: 10px;
+        font-size: 12px;
+    }
+}

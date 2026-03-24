@@ -223,20 +223,3 @@
   cursor: not-allowed;
 }
 
-/* Responsive adjustments */
-@media (max-width: 480px) {
-  .modal-overlay {
-    padding: 0.5rem;
-  }
-  
-  .modal-header,
-  .modal-content,
-  .modal-footer {
-    padding: 1rem;
-  }
-  
-  .profile-picture {
-    width: 5rem;
-    height: 5rem;
-  }
-}

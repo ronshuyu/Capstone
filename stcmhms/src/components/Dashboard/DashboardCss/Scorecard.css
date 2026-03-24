@@ -3,7 +3,7 @@
 .mood-scale {
   margin: 2rem 0;
   padding: 1.5rem;
-  background: linear-gradient(135deg, #FF4757 0%, #FF6B35 25%, #FFA726 50%, #66BB6A 75%, #4CAF50 100%);
+  background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 25%, #FFA726 50%, #FF6B35 75%, #FF4757 100%);
   border-radius: 12px;
   border: 2px solid #e9ecef;
   position: relative;
@@ -11,7 +11,7 @@
 
 .mood-scale-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; 
   align-items: center;
   margin-bottom: 1rem;
   position: relative;

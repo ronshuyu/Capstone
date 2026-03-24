@@ -8,7 +8,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup
 } from 'firebase/auth';
-import { doc, setDoc, getDoc, collection, updateDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, collection, updateDoc, addDoc, getDocs, query, where, orderBy } from 'firebase/firestore';
 import { auth, db } from '../../Firebase/Firebase';
 
 setPersistence(auth, browserSessionPersistence);
@@ -62,7 +62,7 @@ export function AuthProvider({ children }) {
       await setDoc(doc(db, 'users', result.user.uid), {
         email: result.user.email,
         createdAt: new Date().toISOString(),
-        userData: [] // instead of mentalHealthEntries
+        userData: [] 
       });
 
       await createSession(result.user.uid);
@@ -119,37 +119,81 @@ export function AuthProvider({ children }) {
   // User Data (replaces mentalHealthEntries)
   // -------------------------
 
-  async function saveUserData(mood, diary) {
-    if (!currentUser) throw new Error('User not authenticated');
-    
-    try {
-      const entry = {
-        mood,
-        diary,
-        date: new Date().toISOString(),
-        timestamp: Date.now()
-      };
+async function saveUserData(entry) {
+  if (!currentUser) throw new Error("User not authenticated");
 
-      const userRef = doc(db, 'users', currentUser.uid);
-      const userDoc = await getDoc(userRef);
+  const userRef = doc(db, "users", currentUser.uid);
 
-      if (userDoc.exists()) {
-        const currentEntries = userDoc.data().userData || [];
-        const updatedEntries = [...currentEntries, entry];
+  try {
+    // 1️⃣ Update userData in users doc
+    const userDoc = await getDoc(userRef);
+    if (!userDoc.exists()) return;
 
-        await setDoc(userRef, {
-          ...userDoc.data(),
-          userData: updatedEntries,
-          lastUpdated: new Date().toISOString()
-        });
+    const currentEntries = userDoc.data().userData || [];
+    const updatedEntries = [...currentEntries, entry];
 
-        return entry;
-      }
-    } catch (error) {
-      setError(error.message);
-      throw error;
-    }
+    // 2️⃣ Calculate avgScore across all entries
+    const totalScore = updatedEntries.reduce(
+      (sum, e) => sum + Number(e.scaledScore || 0),
+      0
+    );
+    const avgScore = Math.round(totalScore / updatedEntries.length);
+
+    await setDoc(userRef, {
+      ...userDoc.data(),
+      userData: updatedEntries,
+      lastUpdated: new Date().toISOString(),
+      avgScore
+    });
+
+    // 3️⃣ Update mentalHealthScores collection
+    const mhCollection = collection(db, "mentalHealthScores");
+
+    // Fetch all previous entries
+    const q = query(mhCollection, where("uid", "==", currentUser.uid));
+    const querySnapshot = await getDocs(q);
+
+    const allScores = querySnapshot.docs.map(doc => doc.data().scaledScore || 0);
+    allScores.push(entry.scaledScore); // include new entry
+
+    const mhAvgScore = Math.round(
+      allScores.reduce((sum, s) => sum + s, 0) / allScores.length
+    );
+
+    // Add new entry with avgScore
+    await addDoc(collection(db, "mentalHealthScores"), {
+  uid: currentUser.uid,
+  mentalHealthScore: avgScore,
+  timestamp: new Date().toISOString(),
+});
+
+    return { entry, avgScore: mhAvgScore };
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
+}
+
+
+
+
+async function getUserScores() {
+  if (!currentUser) return [];
+
+  try {
+    const q = query(
+      collection(db, "scores"),
+      where("uid", "==", currentUser.uid),
+      orderBy("timestamp", "asc")
+    );
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    setError(error.message);
+    return [];
+  }
+}
 
   async function getUserData() {
     if (!currentUser) return [];
@@ -165,6 +209,24 @@ export function AuthProvider({ children }) {
       return [];
     }
   }
+
+  async function getUserScores() {
+  if (!currentUser) return [];
+
+  try {
+    const q = query(
+      collection(db, "scores"),
+      where("uid", "==", currentUser.uid),
+      orderBy("timestamp", "asc")
+    );
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    setError(error.message);
+    return [];
+  }
+}
 
   // -------------------------
   // Auth Listener
@@ -186,8 +248,9 @@ export function AuthProvider({ children }) {
     signup,
     logout,
     signInWithGoogle,
-    saveUserData,       // ✅ new
-    getUserData,        // ✅ new
+    saveUserData,       
+    getUserData,        
+    getUserScores,
     error,
     setError
   };

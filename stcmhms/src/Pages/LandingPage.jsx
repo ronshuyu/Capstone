@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Navbar from '../components/Landing/Navbar.jsx';
 import Hero from '../components/Landing/Hero.jsx';
 import Why from '../components/Landing/Why';
@@ -9,13 +9,14 @@ import Developers from '../components/Landing/Developers';
 import Contact from '../components/Landing/Contact';
 import Footer from '../components/Landing/Footer';
 
-const LandingPage = ({ onShowLogin }) => {
-  // keep only landing-specific state (e.g., mood diary etc.) if needed
-  // removed: showLogin/email/password/showPassword and <Login />
-
+const LandingPage = ({ onShowLogin, onAdminAccess }) => {
   return (
     <div>
-      <Navbar onLoginClick={onShowLogin} />
+      {/* 🚀 Pass both callbacks */}
+      <Navbar 
+        onLoginClick={onShowLogin} 
+        onAdminAccess={onAdminAccess} 
+      />
       <Hero />
       <div className="container">
         <Title subtitle="Our System" title="What Our System Offers" />

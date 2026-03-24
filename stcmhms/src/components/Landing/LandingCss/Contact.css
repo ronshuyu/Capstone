@@ -67,3 +67,63 @@
     
 
 }
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .contact {
+        max-width: 95%;
+        margin: 60px auto;
+    }
+    
+    .contact-col {
+        flex-basis: 48%;
+    }
+}
+
+@media (max-width: 768px) {
+    .contact {
+        max-width: 95%;
+        margin: 50px auto;
+        flex-direction: column;
+    }
+    
+    .contact-col {
+        flex-basis: 100%;
+        margin-bottom: 30px;
+    }
+    
+    .contact h3 {
+        font-size: 20px;
+    }
+    
+    .contact-col p {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .contact {
+        max-width: 100%;
+        margin: 40px auto;
+        padding: 0 10px;
+    }
+    
+    .contact h3 {
+        font-size: 18px;
+    }
+    
+    .contact-col h3 img {
+        width: 25px;
+        margin-left: 5px;
+    }
+    
+    .contact form input, .contact form textarea {
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+    
+    .contact-col ul li img {
+        width: 20px;
+        margin-right: 8px;
+    }
+}

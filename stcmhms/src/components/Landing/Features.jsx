@@ -20,7 +20,7 @@ const Features = () => {
       </div>
        <div className='feature-right'>
                 <h2>About our AI-Feature</h2>
-                <p>With the help of AI, the Student Mental Health Monitoring System becomes more intelligent, responsive, and adaptive. AI enables the system to analyze large amounts of student input data, detect emotional patterns, and make accurate assessments of mental well-being over time. It learns from behavior trends, adjusts recommendations based on individual needs, and continuously improves through data-driven insights. This makes the AI not just a tool for monitoring, but a smart, evolving engine capable of understanding and supporting complex human emotions with speed and precision.</p>
+                <p>With the help of AI, the Student Mental Health Assesment System becomes more intelligent, responsive, and adaptive. AI enables the system to analyze large amounts of student input data, detect emotional patterns, and make accurate assessments of mental well-being over time. It learns from behavior trends, adjusts recommendations based on individual needs, and continuously improves through data-driven insights. This makes the AI not just a tool for monitoring, but a smart, evolving engine capable of understanding and supporting complex human emotions with speed and precision.</p>
         </div>
     </div>
   )
