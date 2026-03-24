@@ -68,19 +68,6 @@ const Scorecard = ({ currentScore, numEntries }) => {  // Add numEntries prop
         </div>
       </div>
 
-      <div className="current-mood-display">
-        <span className="current-mood-label">Current mood: </span>
-        {numEntries < 10 ? (
-          <span className="current-mood-text">Insufficient data gathered</span>
-        ) : (
-          <span 
-            className="current-mood-text"
-            style={{ color: currentMood.color }}
-          >
-            {currentMood.emoji} {currentMood.label}
-          </span>
-        )}
-      </div>
     </section>
   );
 };

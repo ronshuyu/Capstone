@@ -6,6 +6,7 @@ import Scorecard from '../components/Dashboard/Scorecard';
 import Footer from '../components/Dashboard/FooterDash';
 import ProfileDropdown from '../components/Dashboard/Profile';
 import { useAuth } from '../components/Login/Auth'; // keep your correct path
+import { useToast } from '../contexts/ToastContext';
 import './DashboardPage.css';
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from '../Firebase/Firebase';
@@ -13,6 +14,7 @@ import { db } from '../Firebase/Firebase';
 const DashboardPage = () => {
   // Use the auth hook inside the component (make sure Auth exports these names)
   const { currentUser, logout, saveUserData, getUserData } = useAuth();
+  const { showToast } = useToast();
 
   // Mood tracking states
   const [entries, setEntries] = useState([]);
@@ -72,10 +74,13 @@ function updateScore(entries) {
 // Save entry to Firestore + local state
   // -------------------------
 const handleSaveEntry = async () => {
-  if (!diaryEntry.trim()) return alert("Please write something.");
+  if (!diaryEntry.trim()) {
+    showToast("Please write something.", "warning");
+    return;
+  }
 
   try {
-    const aiResponse = await fetch("https://bnq3xr4j-8000.asse.devtunnels.ms/predict", {
+    const aiResponse = await fetch("https://capstone-dr1n.onrender.com/predict", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: diaryEntry, mood: currentMood })
@@ -100,10 +105,10 @@ const handleSaveEntry = async () => {
     setDiaryEntry("");
     setCurrentMood(3);
 
-    alert("Entry saved and analyzed by AI!");
+    showToast("Entry saved and analyzed by AI!", "success");
   } catch (error) {
     console.error(error);
-    alert("Failed to save entry. Please try again.");
+    showToast("Failed to save entry. Please try again.", "error");
   }
 };
 

@@ -85,30 +85,41 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const signInWithGoogle = async () => {
-    try {
-      setError('');
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
+ const ALLOWED_EMAILS = ["portgasron22@gmail.com"];
 
-      // Create profile if missing
-      const userDoc = await getDoc(doc(db, 'users', result.user.uid));
-      if (!userDoc.exists()) {
-        await setDoc(doc(db, 'users', result.user.uid), {
-          name: result.user.displayName,
-          email: result.user.email,
-          createdAt: new Date().toISOString(),
-          userData: [] // renamed
-        });
-      }
+const signInWithGoogle = async () => {
+  try {
+    setError('');
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
 
-      await createSession(result.user.uid);
-      return result;
-    } catch (error) {
-      setError(error.message);
-      throw error;
+    const email = result.user.email?.toLowerCase();
+
+    // 🚫 BLOCK HERE
+    if (!email || !ALLOWED_EMAILS.includes(email)) {
+      await signOut(auth);
+      throw new Error("Unauthorized Google account");
     }
-  };
+
+    // ✅ Only allowed users reach here
+    const userDoc = await getDoc(doc(db, 'users', result.user.uid));
+    if (!userDoc.exists()) {
+      await setDoc(doc(db, 'users', result.user.uid), {
+        name: result.user.displayName,
+        email: result.user.email,
+        createdAt: new Date().toISOString(),
+        userData: []
+      });
+    }
+
+    await createSession(result.user.uid);
+    return result;
+
+  } catch (error) {
+    setError(error.message);
+    throw error;
+  }
+};
 
   const logout = async () => {
     await endSession(); // record logout time

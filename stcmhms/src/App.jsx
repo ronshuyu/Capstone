@@ -5,10 +5,17 @@ import DashboardPage from './Pages/DashboardPage';
 import Login from './components/Login/Login';
 import { useAuth } from './components/Login/Auth';
 import Admindash from './components/Admindash/Admindash';
+import { ToastProvider } from './contexts/ToastContext';
+
+
 
 export default function App() {
   const { currentUser, logout } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
+
+  const ALLOWED_EMAILS = ['portgasron22@gmail.com'];
+  const isAllowedUser =
+  currentUser && ALLOWED_EMAILS.includes(currentUser.email?.toLowerCase());
 
   // ✅ initialize directly from localStorage
   const [isAdmin, setIsAdmin] = useState(() => {
@@ -31,44 +38,46 @@ export default function App() {
   };
 
   return (
-    <>
-      {showLogin && (
-        <Login
-          isOpen={showLogin}
-          onClose={() => setShowLogin(false)}
-        />
-      )}
+    <ToastProvider>
+      <>
+        {showLogin && (
+          <Login
+            isOpen={showLogin}
+            onClose={() => setShowLogin(false)}
+          />
+        )}
 
-      <Routes>
-        <Route
-          path="/"
-          element={
-            currentUser
-              ? <Navigate to="/dashboard" replace />
-              : <LandingPage 
-                  onShowLogin={() => setShowLogin(true)} 
-                  onAdminAccess={handleAdminAccess}
-                />
-          }
-        />
-        <Route
-          path="/dashboard"
-          element={
-            currentUser
-              ? <DashboardPage user={currentUser} onLogout={handleLogout} />
-              : <Navigate to="/" replace />
-          }
-        />
-        <Route
-          path="/admindash"
-          element={
-            isAdmin
-              ? <Admindash />
-              : <Navigate to="/" replace />
-          }
-        />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              currentUser
+                ? <Navigate to="/dashboard" replace />
+                : <LandingPage 
+                    onShowLogin={() => setShowLogin(true)} 
+                    onAdminAccess={handleAdminAccess}
+                  />
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              currentUser
+                ? <DashboardPage user={currentUser} onLogout={handleLogout} />
+                : <Navigate to="/" replace />
+            }
+          />
+          <Route
+            path="/admindash"
+            element={
+              isAdmin
+                ? <Admindash />
+                : <Navigate to="/" replace />
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </>
+    </ToastProvider>
   );
 }

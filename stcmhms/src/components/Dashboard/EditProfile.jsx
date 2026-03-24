@@ -1,167 +1,373 @@
-import React, { useState } from 'react';
-import { X, Camera, User, Edit3 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Download, Filter, BarChart2, List } from 'lucide-react';
 import './DashboardCss/EditProfile.css';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
+import html2canvas from 'html2canvas';
+import { db } from '../../Firebase/Firebase'; // adjust your firebase import
+import { collection, getDocs } from "firebase/firestore";
+import { 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
+} from 'recharts';
 
-const EditProfile = ({ isOpen, onClose, currentUser, onSave }) => {
-  const [formData, setFormData] = useState({
-    username: currentUser?.username || '',
-    tagline: currentUser?.tagline || '',
-    profilePicture: currentUser?.profilePicture || null
-  });
-  const [previewImage, setPreviewImage] = useState(currentUser?.profilePicture || null);
+const gradeOrder = ['7','8','9','10','11','12','College'];
+const mentalHealthOrder = ['Excellent','Good','Neutral','Low','Very Low'];
+const mhColors = {
+  'Excellent': '#22c55e',
+  'Good': '#84cc16',
+  'Neutral': '#eab308',
+  'Low': '#f97316',
+  'Very Low': '#ef4444'
+};
+
+// Helper: Convert numeric score to category or map string
+const getCategory = (score) => {
+  if (typeof score === 'string' && isNaN(Number(score))) {
+    const match = mentalHealthOrder.find(m => m.toLowerCase() === score.toLowerCase());
+    if (match) return match;
+  }
+  const num = Number(score);
+  if (!isNaN(num)) {
+    if (num >= 100) return 'Excellent';
+    if (num >= 60) return 'Good';
+    if (num >= 40) return 'Neutral';
+    if (num >= 20) return 'Low';
+    return 'Very Low';
+  }
+  return 'Neutral';
+};
+
+const EditProfile = ({ isOpen, onClose }) => {
+  const [clients, setClients] = useState([]);
+  const [displayClients, setDisplayClients] = useState([]);
+  const [filterGrade, setFilterGrade] = useState('');
+  const [sortByMental, setSortByMental] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const chartRef = useRef(null);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  useEffect(() => {
+    if (!isOpen) return;
+    const fetchClients = async () => {
+      setIsLoading(true);
+      try {
+        const snapshot = await getDocs(collection(db, 'diaryEntries'));
+        const data = snapshot.docs.map(doc => {
+          const docData = doc.data();
+          const category = getCategory(docData.averageMentalHealthScore);
+          return {
+            id: doc.id,
+            ...docData,
+            category
+          };
+        });
+        setClients(data);
+      } catch (err) {
+        console.error('Error fetching clients:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchClients();
+  }, [isOpen]);
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // Create preview URL
-      const previewUrl = URL.createObjectURL(file);
-      setPreviewImage(previewUrl);
-      
-      // Store file in form data
-      setFormData(prev => ({
-        ...prev,
-        profilePicture: file
-      }));
+  useEffect(() => {
+    let data = [...clients];
+
+    if (filterGrade) {
+      data = data.filter(c => c.gradeLevel === filterGrade);
     }
-  };
 
-  const handleSave = async () => {
-    setIsLoading(true);
+    if (sortByMental) {
+      data.sort((a,b) => {
+        const aIdx = mentalHealthOrder.indexOf(a.category);
+        const bIdx = mentalHealthOrder.indexOf(b.category);
+        if (aIdx !== bIdx) return aIdx - bIdx;
+        // Secondary sort: Grade
+        return gradeOrder.indexOf(a.gradeLevel) - gradeOrder.indexOf(b.gradeLevel);
+      });
+    } else {
+      // Default sort by grade, then by mental health
+      data.sort((a,b) => {
+        const gradeProg = gradeOrder.indexOf(a.gradeLevel) - gradeOrder.indexOf(b.gradeLevel);
+        if (gradeProg !== 0) return gradeProg;
+        return mentalHealthOrder.indexOf(a.category) - mentalHealthOrder.indexOf(b.category);
+      });
+    }
+
+    setDisplayClients(data);
+  }, [clients, filterGrade, sortByMental]);
+
+  // Prepare chart data: Count per grade per mental health score
+  const chartData = gradeOrder.map(grade => {
+    const gradeClients = displayClients.filter(c => c.gradeLevel === grade);
+    const counts = { grade, total: gradeClients.length };
+    mentalHealthOrder.forEach(mh => {
+      counts[mh] = gradeClients.filter(c => c.category === mh).length;
+    });
+    return counts;
+  }).filter(data => data.total > 0)
+    .sort((a, b) => a.total - b.total); // Sort ascending based on total students
+
+  const exportToExcelWithChart = async () => {
+    setIsExporting(true);
     try {
-      // Call the parent's save function with the form data
-      await onSave(formData);
-      onClose();
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Analytics Report');
+
+      // Add Headers
+      worksheet.columns = [
+        { header: 'Grade Level', key: 'grade', width: 20 },
+        { header: 'Mental Health Score', key: 'score', width: 25 },
+        { header: 'Category', key: 'category', width: 25 },
+      ];
+
+      // Format header row
+      worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+      worksheet.getRow(1).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF4F46E5' },
+      };
+      
+      // Add Data (no names included)
+      displayClients.forEach(c => {
+        worksheet.addRow({
+          grade: c.gradeLevel,
+          score: c.averageMentalHealthScore,
+          category: c.category
+        });
+      });
+
+      // ─── SUMMARY BREAKDOWN IN SAME SHEET ───
+      worksheet.addRow({});
+      worksheet.addRow({});
+      
+      const summaryTitleRow = worksheet.addRow(['SUMMARY BREAKDOWN']);
+      summaryTitleRow.font = { bold: true, size: 14 };
+      
+      const summaryHeaderRow = worksheet.addRow(['Grade Level', 'Total Students', ...mentalHealthOrder]);
+      summaryHeaderRow.font = { bold: true };
+      
+      chartData.forEach(data => {
+        const row = [data.grade, data.total];
+        mentalHealthOrder.forEach(mh => row.push(data[mh] || 0));
+        worksheet.addRow(row);
+      });
+
+      // Capture Chart as Image and stick it to the main worksheet
+      if (chartRef.current) {
+        const canvas = await html2canvas(chartRef.current, { scale: 2 });
+        const imgData = canvas.toDataURL('image/png');
+        
+        const imageId = workbook.addImage({
+          base64: imgData,
+          extension: 'png',
+        });
+        
+        // Add chart to the right of the data table (Column K)
+        worksheet.addImage(imageId, {
+          tl: { col: 10, row: 1 },
+          ext: { width: Math.floor(canvas.width / 2.5), height: Math.floor(canvas.height / 2.5) }
+        });
+      }
+
+      // Generate and save file
+      const buffer = await workbook.xlsx.writeBuffer();
+      saveAs(new Blob([buffer]), 'MentalHealth_Analytics.xlsx');
     } catch (error) {
-      console.error('Error saving profile:', error);
-      alert('Failed to save profile. Please try again.');
+      console.error('Export Error:', error);
     } finally {
-      setIsLoading(false);
+      setIsExporting(false);
     }
   };
 
   const handleClose = () => {
-    // Reset form when closing
-    setFormData({
-      username: currentUser?.username || '',
-      tagline: currentUser?.tagline || '',
-      profilePicture: currentUser?.profilePicture || null
-    });
-    setPreviewImage(currentUser?.profilePicture || null);
+    setFilterGrade('');
+    setSortByMental(false);
     onClose();
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-container">
+    <div className="analytics-overlay">
+      <div className="analytics-container">
         {/* Header */}
-        <div className="modal-header">
-          <h2 className="modal-title">Edit Profile</h2>
-          <button onClick={handleClose} className="close-button">
+        <div className="analytics-header">
+          <div>
+            <h2 className="analytics-title">
+              <BarChart2 className="title-icon" />
+              Student Mental Health Analytics
+            </h2>
+            <p className="analytics-subtitle">Insights into student well-being across grade levels</p>
+          </div>
+          <button onClick={handleClose} className="close-btn" aria-label="Close modal">
             <X size={24} />
           </button>
         </div>
 
         {/* Content */}
-        <div className="modal-content">
-          {/* Profile Picture Upload */}
-          <div className="profile-picture-section">
-            <div className="profile-picture-container">
-              <div className="profile-picture">
-                {previewImage ? (
-                  <img src={previewImage} alt="Profile preview" />
-                ) : (
-                  <div className="profile-picture-placeholder">
-                    <User size={32} />
-                  </div>
-                )}
+        <div className="analytics-content">
+          {/* Controls Menu */}
+          <div className="controls-bar">
+            <div className="filters-group">
+              <div className="filter-item">
+                <Filter size={18} className="filter-icon" />
+                <select 
+                  value={filterGrade} 
+                  onChange={e => setFilterGrade(e.target.value)}
+                  className="grade-select"
+                >
+                  <option value="">All Grades</option>
+                  {gradeOrder.map(g => (
+                    <option key={g} value={g}>Grade {g}</option>
+                  ))}
+                </select>
               </div>
-              <label className="camera-button">
-                <Camera size={16} />
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="file-input"
-                />
+              
+              <label className="checkbox-label">
+                <div className="checkbox-custom">
+                  <input
+                    type="checkbox"
+                    checked={sortByMental}
+                    onChange={e => setSortByMental(e.target.checked)}
+                    value={true}
+                  />
+                  <div className="checkbox-box"></div>
+                </div>
+                Sort by Mental Health Score
               </label>
             </div>
-            <p className="upload-hint">
-              Click the camera icon to upload a new profile picture
-            </p>
+
+            <button 
+              onClick={exportToExcelWithChart} 
+              disabled={displayClients.length === 0 || isExporting}
+              className="export-btn"
+            >
+              <Download size={18} />
+              {isExporting ? 'Exporting...' : 'Export Excel'}
+            </button>
           </div>
 
-          {/* Username Field */}
-          <div className="form-section">
-            <label className="form-label">
-              <div className="label-with-icon">
-                <User size={16} />
-                <span>Username</span>
-              </div>
-            </label>
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleInputChange}
-              placeholder="Enter your username"
-              className="form-input"
-              maxLength={30}
-            />
-            <div className="character-count">
-              {formData.username.length}/30 characters
+          {isLoading ? (
+            <div className="loader-container">
+              <div className="spinner"></div>
+              <p>Loading analytics data...</p>
             </div>
-          </div>
+          ) : (
+            <div className="dashboard-grid layout-expanded">
+              
+              <div className="left-column">
+                {/* Chart Section */}
+                <div className="chart-card">
+                  <h3 className="card-title">Score Distribution by Grade Level</h3>
+                  {chartData.length > 0 ? (
+                    <div className="chart-wrapper" ref={chartRef}>
+                      <ResponsiveContainer width="100%" height={350}>
+                        <BarChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                          <XAxis dataKey="grade" axisLine={false} tickLine={false} />
+                          <YAxis axisLine={false} tickLine={false} allowDecimals={false} />
+                          <Tooltip 
+                            contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
+                          />
+                          <Legend 
+                            iconType="circle" 
+                            wrapperStyle={{ paddingTop: '20px' }} 
+                            payload={mentalHealthOrder.map((mh, index) => (
+                              <Bar
+                                key={mh}
+                                dataKey={mh}
+                                name={mh}
+                                stackId="a"
+                                fill={mhColors[mh]}
+                                radius={[4, 4, 4, 4]}
+                                isAnimationActive={false}
+                              />
+                            ))}
+                          />
+                          {[...mentalHealthOrder].reverse().map(mh => (
+                            <Bar key={mh} dataKey={mh} name={mh} stackId="a" fill={mhColors[mh]} radius={[4, 4, 4, 4]} />
+                          ))}
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  ) : (
+                    <div className="empty-state">No chart data available for the selected filters.</div>
+                  )}
+                </div>
 
-          {/* Tagline Field */}
-          <div className="form-section">
-            <label className="form-label">
-              <div className="label-with-icon">
-                <Edit3 size={16} />
-                <span>Tagline</span>
+                {/* Summary Breakdown Section */}
+                <div className="summary-card">
+                   <h3 className="card-title">
+                     <List size={20} className="title-icon"/> 
+                     Summary Breakdown
+                   </h3>
+                   <div className="summary-list">
+                      {chartData.map((data, ix) => (
+                        <div key={ix} className="summary-grade-group">
+                           <h4 className="summary-grade-title">
+                             <span>Grade {data.grade}</span>
+                             <span className="total-badge">{data.total} Students</span>
+                           </h4>
+                           <ul className="summary-details">
+                              {mentalHealthOrder.map(mh => (
+                                data[mh] > 0 && (
+                                  <li key={mh} style={{ borderLeft: `5px solid ${mhColors[mh]}` }}>
+                                    <span className="summary-mh-label">{mh}</span> 
+                                    <span className="summary-count">{data[mh]}</span>
+                                  </li>
+                                )
+                              ))}
+                           </ul>
+                        </div>
+                      ))}
+                      {chartData.length === 0 && (
+                        <p className="empty-summary-state">No summaries found.</p>
+                      )}
+                   </div>
+                </div>
               </div>
-            </label>
-            <textarea
-              name="tagline"
-              value={formData.tagline}
-              onChange={handleInputChange}
-              placeholder="Write a short bio or tagline..."
-              rows={3}
-              className="form-input form-textarea"
-              maxLength={150}
-            />
-            <div className="character-count">
-              {formData.tagline.length}/150 characters
-            </div>
-          </div>
-        </div>
 
-        {/* Footer */}
-        <div className="modal-footer">
-          <button
-            onClick={handleClose}
-            className="footer-button cancel-button"
-            disabled={isLoading}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSave}
-            disabled={isLoading || !formData.username.trim()}
-            className="footer-button save-button"
-          >
-            {isLoading ? 'Saving...' : 'Save Changes'}
-          </button>
+              {/* Data Table Section */}
+              <div className="table-card">
+                <h3 className="card-title">Recent Records <span className="record-count">(Showing 10 entries)</span></h3>
+                <div className="table-wrapper">
+                  <table className="modern-table">
+                    <thead>
+                      <tr>
+                        <th>Grade</th>
+                        <th>Mental Health Score</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {displayClients.slice(0, 10).map((c, i) => (
+                        <tr key={i}>
+                          <td>
+                            <span className="grade-badge">{c.gradeLevel}</span>
+                          </td>
+                          <td>
+                            <span className="score-badge" style={{ backgroundColor: `${mhColors[c.category] || '#9ca3af'}20`, color: mhColors[c.category] || '#4b5563' }}>
+                              <span className="dot" style={{ backgroundColor: mhColors[c.category] || '#9ca3af' }}></span>
+                              {c.averageMentalHealthScore} 
+                              {(!isNaN(Number(c.averageMentalHealthScore)) && c.category) && ` (${c.category})`}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                      {displayClients.length === 0 && (
+                        <tr>
+                          <td colSpan="2" className="empty-state">No records found</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            </div>
+          )}
         </div>
       </div>
     </div>
