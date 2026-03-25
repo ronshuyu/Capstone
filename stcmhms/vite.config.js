@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/suggest-emotions': 'http://localhost:5000',
+      '/suggest-emotions': 'http://localhost:5000', 
     },
   },
 })

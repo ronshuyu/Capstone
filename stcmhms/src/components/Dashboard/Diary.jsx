@@ -287,7 +287,7 @@ const handleSelectStudent = (student) => {
 
     setIsAnalyzing(true);
     try {
-      const res = await fetch("http://localhost:5000/suggest-emotions", {
+      const res = await fetch("https://capstone-dr1n.onrender.com/suggest-emotions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text }),

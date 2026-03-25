@@ -14,7 +14,6 @@ export default function App() {
   const [showLogin, setShowLogin] = useState(false);
 
   const ALLOWED_EMAILS = ['portgasron22@gmail.com'];
-  const isAllowedUser =
   currentUser && ALLOWED_EMAILS.includes(currentUser.email?.toLowerCase());
 
   // ✅ initialize directly from localStorage

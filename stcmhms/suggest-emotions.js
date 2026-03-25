@@ -116,12 +116,13 @@ router.post('/suggest-emotions', async (req, res) => {
 
     return res.status(200).json({ emotions });
   } catch (err) {
-    console.error('[suggest-emotions] Gemini error:', err?.message || err);
-    return res.status(500).json({
-      emotions: [],
-      error: 'Failed to analyze emotions. Please try again.',
-    });
-  }
+  console.error('[suggest-emotions] Gemini error FULL:', err);
+  return res.status(500).json({
+    emotions: [],
+    error: err?.message || String(err),
+    details: err
+  });
+}
 });
 
 export default router;
