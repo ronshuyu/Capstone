@@ -1,7 +1,26 @@
+/* Reset button style */
+.btndiary-reset {
+  padding: 0.8rem 1.5rem;
+  font-weight: 700;
+  font-size: 1rem;
+  background: #f3f4f6;
+  color: #2e8b57;
+  border: 2px solid #b6ead3;
+  border-radius: 40px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: 0.5rem;
+}
+.btndiary-reset:hover {
+  background: #e0e7ef;
+  color: #2563eb;
+  border-color: #6fcf97;
+}
 .mood-section {
   position: relative;
-  width: 1400px;
-  padding: 20px;
+  width: 1000px;
+  max-width: 98vw;
+  padding: 12px 18px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   backdrop-filter: blur(10px);
@@ -11,6 +30,8 @@
   color: #ffffff;
   text-align: center;
   transition: transform 0.3s ease;
+  margin: 2rem auto;
+  display: block;
 }
 
 .glass-card:hover {

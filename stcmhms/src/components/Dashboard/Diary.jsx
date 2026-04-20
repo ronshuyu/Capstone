@@ -450,7 +450,9 @@ const handleSelectStudent = (student) => {
   return (
     <section className="mood-section">
       <h2 className="section-title">Daily Mood &amp; Mini Diary</h2>
-
+      <h2 className="section-black">Student Part</h2>
+      <hr className="section-divider" />
+      <br />
       {dropdownOpen && <div className="custom-select-backdrop" />}
 
       {(textareaFocused || isClosing) && (
@@ -496,13 +498,14 @@ const handleSelectStudent = (student) => {
           key={student.id}
           type="button"
           className="name-suggestion-item"
-          onClick={() => handleSelectStudent(student)}
+          onMouseDown={() => handleSelectStudent(student)}
         >
           {student.name} — Grade {student.gradeLevel}
         </button>
       ))}
     </div>
   )}
+
 </div>
 
           <div className="form-group">
@@ -518,40 +521,52 @@ const handleSelectStudent = (student) => {
           </div>
         </div>
 
-        <div className="form-group">
-          <label className="form-label" htmlFor="diaryEntry">
-            Daily Diary Entry:
-          </label>
-
-          {(textareaFocused || isAnalyzing || suggestedEmotions.length > 0) && (
+        <div className="form-group" style={{ display: 'flex', alignItems: 'flex-start', gap: '1.5rem' }}>
+          <div style={{ flex: 1 }}>
+            <label className="form-label" htmlFor="diaryEntry">
+              Your Thoughts too:
+            </label>
+            <textarea
+              ref={textareaRef}
+              className={`form-textarea ${textareaFocused ? 'modal-open' : ''} ${isClosing ? 'closing' : ''}`}
+              id="diaryEntry"
+              placeholder="Start typing your thoughts here..."
+              value={diaryEntry}
+              onChange={handleDiaryChange}
+              onFocus={() => {
+                setTextareaFocused(true);
+                setIsClosing(false);
+              }}
+              onBlur={() => {
+                setIsClosing(true);
+                setTimeout(() => {
+                  setTextareaFocused(false);
+                  setIsClosing(false);
+                }, 300);
+              }}
+            />
+          </div>
+          <div style={{ minWidth: 180, maxWidth: 220 }}>
             <EmotionChips
-              emotions={suggestedEmotions}
+              emotions={(() => {
+                // Always show 5 emotions, fill with placeholders if needed
+                const EMOTION_PLACEHOLDERS = ['happy', 'sad', 'calm', 'anxious', 'excited'];
+                let ems = suggestedEmotions.slice(0, 5);
+                if (ems.length < 5) {
+                  ems = ems.concat(EMOTION_PLACEHOLDERS.filter(e => !ems.includes(e)).slice(0, 5 - ems.length));
+                }
+                return ems;
+              })()}
               isAnalyzing={isAnalyzing}
               onChipClick={handleChipClick}
               selectedEmotions={selectedEmotions}
             />
-          )}
-
-          <textarea
-            ref={textareaRef}
-            className={`form-textarea ${textareaFocused ? 'modal-open' : ''} ${isClosing ? 'closing' : ''}`}
-            id="diaryEntry"
-            placeholder="Start typing your thoughts here..."
-            value={diaryEntry}
-            onChange={handleDiaryChange}
-            onFocus={() => {
-              setTextareaFocused(true);
-              setIsClosing(false);
-            }}
-            onBlur={() => {
-              setIsClosing(true);
-              setTimeout(() => {
-                setTextareaFocused(false);
-                setIsClosing(false);
-              }, 300);
-            }}
-          />
+          </div>
         </div>
+
+        <h2 className="section-black">Counselor Part</h2>
+        <hr className="section-divider" />
+        <br />
 
         <div className="form-group">
           <label className="form-label" htmlFor="moodSelect">
@@ -571,9 +586,22 @@ const handleSelectStudent = (student) => {
           />
         </div>
 
-        <div className="score-display">
+        <div className="score-display" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           <button type="submit" className="btndiary-submit">
             Save entry
+          </button>
+          <button
+            type="button"
+            className="btndiary-reset"
+            onClick={() => {
+              setDiaryEntry("");
+              setCurrentMood(3);
+              setLocalMood(3);
+              setSuggestedEmotions([]);
+              setSelectedEmotions([]);
+            }}
+          >
+            Reset
           </button>
         </div>
       </form>

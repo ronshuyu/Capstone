@@ -45,7 +45,7 @@ const ALLOWED_EMOTIONS = new Set([
 const SYSTEM_PROMPT = `You are a strict emotion-detection assistant for a student mental health diary.
 
 Task:
-Analyze the diary entry and return ONLY a valid JSON array containing 2 to 4 emotions that best match the entry.
+Analyze the diary entry and return ONLY a valid JSON array containing 5 emotions that best match the entry.
 
 Allowed emotions:
 ${[...ALLOWED_EMOTIONS].join(', ')}

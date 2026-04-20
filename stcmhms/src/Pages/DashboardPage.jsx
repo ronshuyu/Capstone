@@ -141,11 +141,10 @@ const handleSaveEntry = async () => {
 
   return (
     <div className="landing-page">
+      <Navbar />
       <main className="dashboard-main-content">
         <div className="container">
-       
           <HeroDash />
-
           <Diary
             currentMood={currentMood}
             setCurrentMood={setCurrentMood}
@@ -153,15 +152,12 @@ const handleSaveEntry = async () => {
             setDiaryEntry={setDiaryEntry}
             onSaveEntry={handleSaveEntry}
             avgScore={currentScore}
-            numEntries={entries.length} // Pass the number of entries
+            numEntries={entries.length}
           />
-
-          <Scorecard currentScore={currentScore} numEntries={entries.length} /> 
-          </div>
+          <Scorecard currentScore={currentScore} numEntries={entries.length} />
+        </div>
       </main>
-
       <Footer />
-
       {currentUser && <ProfileDropdown user={currentUser} onLogout={handleLogout} />}
     </div>
   );

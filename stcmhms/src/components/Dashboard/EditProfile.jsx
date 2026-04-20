@@ -42,6 +42,8 @@ const EditProfile = ({ isOpen, onClose }) => {
   const [displayClients, setDisplayClients] = useState([]);
   const [filterGrade, setFilterGrade] = useState('');
   const [sortByMental, setSortByMental] = useState(false);
+  const [exportStartDate, setExportStartDate] = useState("");
+  const [exportEndDate, setExportEndDate] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const chartRef = useRef(null);
@@ -109,7 +111,21 @@ const EditProfile = ({ isOpen, onClose }) => {
   }).filter(data => data.total > 0)
     .sort((a, b) => a.total - b.total); // Sort ascending based on total students
 
-  const exportToExcelWithChart = async () => {
+  // Helper: filter by date range
+  const filterByDateRange = (data) => {
+    if (!exportStartDate && !exportEndDate) return data;
+    const start = exportStartDate ? new Date(exportStartDate) : null;
+    const end = exportEndDate ? new Date(exportEndDate) : null;
+    return data.filter(c => {
+      if (!c.updatedAt) return false;
+      const entryDate = new Date(c.updatedAt.seconds ? c.updatedAt.seconds * 1000 : c.updatedAt);
+      if (start && entryDate < start) return false;
+      if (end && entryDate > end) return false;
+      return true;
+    });
+  };
+
+  const exportToExcelWithChart = async (byDate = false) => {
     setIsExporting(true);
     try {
       const workbook = new ExcelJS.Workbook();
@@ -131,7 +147,8 @@ const EditProfile = ({ isOpen, onClose }) => {
       };
       
       // Add Data (no names included)
-      displayClients.forEach(c => {
+      const exportData = byDate ? filterByDateRange(displayClients) : displayClients;
+      exportData.forEach(c => {
         worksheet.addRow({
           grade: c.gradeLevel,
           score: c.averageMentalHealthScore,
@@ -240,14 +257,41 @@ const EditProfile = ({ isOpen, onClose }) => {
               </label>
             </div>
 
-            <button 
-              onClick={exportToExcelWithChart} 
-              disabled={displayClients.length === 0 || isExporting}
-              className="export-btn"
-            >
-              <Download size={18} />
-              {isExporting ? 'Exporting...' : 'Export Excel'}
-            </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <button 
+                onClick={() => exportToExcelWithChart(false)} 
+                disabled={displayClients.length === 0 || isExporting}
+                className="export-btn"
+              >
+                <Download size={18} />
+                {isExporting ? 'Exporting...' : 'Export Excel (All/Grade)'}
+              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 4 }}>
+                <input
+                  type="date"
+                  value={exportStartDate}
+                  onChange={e => setExportStartDate(e.target.value)}
+                  style={{ fontSize: 12, padding: '2px 4px', borderRadius: 4, border: '1px solid #ccc' }}
+                  title="Start date"
+                />
+                <span style={{ fontSize: 12 }}>to</span>
+                <input
+                  type="date"
+                  value={exportEndDate}
+                  onChange={e => setExportEndDate(e.target.value)}
+                  style={{ fontSize: 12, padding: '2px 4px', borderRadius: 4, border: '1px solid #ccc' }}
+                  title="End date"
+                />
+                <button
+                  onClick={() => exportToExcelWithChart(true)}
+                  disabled={displayClients.length === 0 || isExporting || (!exportStartDate && !exportEndDate)}
+                  className="export-btn"
+                  style={{ fontSize: 12, padding: '4px 8px', marginLeft: 4 }}
+                >
+                  <Download size={14} /> Export by Date
+                </button>
+              </div>
+            </div>
           </div>
 
           {isLoading ? (

@@ -1,6 +1,17 @@
+/* Divider for section separation */
+.section-divider {
+  border: none;
+  border-bottom: 2px solid #444;
+  margin: 0.5rem 0 1.2rem 0;
+  width: 100%;
+}
+/* Section titles in black for Student and Councilor Part */
+.section-black {
+  color: #111 !important;
+}
 .landing-page {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
- background: linear-gradient(120deg, #d7f8df 0%, #b6ead3 0%, #88f29b 100% );
+ background: linear-gradient(120deg, #d7f8df 0%, #ffffff 0%, #fefefe 100% );
 
 background-size: 200% 200%;
 animation: relaxingGradient 10s ease infinite;
@@ -15,7 +26,7 @@ animation: relaxingGradient 10s ease infinite;
 .dashboard-main-content {
   min-height: 100vh;
   padding: .5rem;
-  margin: 1px 0 1px 0;
+  margin: 2.8rem 0 1px 0; /* Add top margin to prevent overlap with header */
 }
 
 .dashboard-page .container {
